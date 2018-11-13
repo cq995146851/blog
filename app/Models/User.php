@@ -1,7 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use function foo\func;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -26,4 +27,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * 监听钩子函数
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        //模型初始化时触发
+        static::creating(function($user) {
+            $user->activation_token = str_random(32);
+        });
+    }
 }
