@@ -15,9 +15,15 @@ use Faker\Generator as Faker;
 
 $factory->define(App\Models\User::class, function (Faker $faker) {
     return [
-        'name' => $faker->name,
+        'name' => $faker->unique()->name,
         'email' => $faker->unique()->safeEmail,
-        'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+        'password' => bcrypt('123456'),
         'remember_token' => str_random(10),
+        'activation_token' => str_random(32),
+        'activated' => false,
+        'avatar' => 'http://www.blog.com/uploads/images/avatar/201811/14//1_1542182515_Hi1l7dknoB.jpg',
+        'is_admin' => false,
+        'created_at' => $faker->date() . ' ' . $faker->time(),
+        'updated_at' => $faker->date() . ' ' . $faker->time()
     ];
 });

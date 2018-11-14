@@ -15,8 +15,19 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('check.login', [
-           'except' => ['create', 'store', 'confirmCreate']
+           'except' => ['create', 'store', 'confirmCreate', 'index']
         ]);
+    }
+
+    public function index()
+    {
+        $users = User::paginate(10);
+        return view('users.index', compact('users'));
+    }
+
+    public function show(User $user)
+    {
+        return view('users.show', compact('user'));
     }
 
     /**
@@ -67,7 +78,13 @@ class UsersController extends Controller
             $user->avatar = $image['path'];
         }
         $user->save();
-        return redirect()->route('home')->with('success', '修改资料成功');
+        return redirect()->route('users.show', $user->id)->with('success', '修改资料成功');
+    }
+
+
+    public function destroy()
+    {
+
     }
 
     public function createResetPassword()
@@ -96,17 +113,20 @@ class UsersController extends Controller
         }
         $user->password = bcrypt($request->input('password'));
         $user->save();
-        return redirect()->route('home')->with('success', '密码修改成功');
+        return redirect()->route('sessions.create')->with('success', '密码修改成功,请重新登录');
     }
 
     //注册激活
     public function confirmCreate($token)
     {
         $user = User::where('activation_token', $token)->first();
+        if (!$user) {
+            return redirect()->route('sessions.create')->with('warning', '邮箱已经失效或已经激活成功，请重新激活或发送');
+        }
         $user->activation_token = null;
         $user->activated = true;
         $user->save();
         Auth::login($user);
-        return redirect()->route('home')->with('success', '邮箱激活成功');
+        return redirect()->route('users.show', $user->id)->with('success', '邮箱激活成功');
     }
 }

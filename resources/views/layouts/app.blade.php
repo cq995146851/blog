@@ -2,8 +2,9 @@
 <html>
     <head>
         <title>
-            博客---@yield('title', 'blog')
+            星期八博客---@yield('title', 'blog')
         </title>
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,er-scaleable=no">
         <link rel="stylesheet" href="{{asset('css/lib/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/lib/font-awesome/css/font-awesome.css')}}">
         <link rel="stylesheet" href="{{asset('/css/blog.css')}}">

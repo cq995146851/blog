@@ -9,13 +9,18 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+            <a class="navbar-brand" href="#">
+                <img alt="Brand" src="{{asset('/images/blog.jpg')}}" with="25" height="25">
+            </a>
             <a class="navbar-brand" href="{{route('home')}}">星期八博客</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
+
                 @if(Auth::check())
+                    <li><a href="{{route('users.index')}}">所有用户</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             @if(Auth::user()->avatar)

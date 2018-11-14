@@ -19,7 +19,8 @@ class UserPolicy
         //
     }
 
-    public function update(User $currUser, User $user) {
+    public function update(User $currUser, User $user)
+    {
         return $currUser->id === $user->id;
     }
 }

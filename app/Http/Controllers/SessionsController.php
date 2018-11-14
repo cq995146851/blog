@@ -33,7 +33,7 @@ class SessionsController extends Controller
         } elseif (!Auth::user()->activated) {
             return redirect()->back()->withErrors('您的账号未激活,请检查邮箱中的邮件进行激活');
         }
-        return redirect()->route('home')->with('success', '登录成功');
+        return redirect()->route('users.show', Auth::id())->with('success', '登录成功');
     }
 
     /**
