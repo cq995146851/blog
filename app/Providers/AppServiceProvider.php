@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //设置最大字符集
-        Schema::defaultStringLength(250);
+        Schema::defaultStringLength(191);
     }
 
     /**
