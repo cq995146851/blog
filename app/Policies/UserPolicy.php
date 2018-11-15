@@ -19,8 +19,25 @@ class UserPolicy
         //
     }
 
+    /**
+     * @param User $currUser
+     * @param User $user
+     * @return bool
+     * 修改权限
+     */
     public function update(User $currUser, User $user)
     {
         return $currUser->id === $user->id;
+    }
+
+    /**
+     * @param User $currUser
+     * @param User $user
+     * @return bool
+     * 删除
+     */
+    public function delete(User $currUser, User $user)
+    {
+        return $currUser->id === $user->id || $currUser->is_admin;
     }
 }

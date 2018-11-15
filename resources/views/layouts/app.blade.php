@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="{{asset('css/lib/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{asset('css/lib/font-awesome/css/font-awesome.css')}}">
         <link rel="stylesheet" href="{{asset('/css/blog.css')}}">
+        @yield('styles')
     </head>
     <body>
         @include('layouts._header')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Handler\ImageUpload;
 use App\Http\Requests\UserRequest;
+use App\Models\Article;
 use App\Models\User;
 use App\Handler\Email;
 use Illuminate\Support\Facades\Auth;
@@ -12,26 +13,42 @@ use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
+    /**
+     *检验登录状态
+     */
     public function __construct()
     {
         $this->middleware('check.login', [
-           'except' => ['create', 'store', 'confirmCreate', 'index']
+           'except' => ['create', 'store', 'confirmCreate', 'index', 'show']
         ]);
     }
 
+    /**
+     * 用户列表
+     */
     public function index()
     {
         $users = User::paginate(10);
         return view('users.index', compact('users'));
     }
 
+    /**
+     * @param User $user
+     * 个人中心
+     */
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $user = User::withCount('articles')
+            ->find($user->id);
+        $articles = Article::where('user_id', $user->id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        return view('users.show', compact('user', 'articles'));
     }
 
     /**
-     * 注册视图
+     * 用户注册视图
      */
     public function create()
     {
@@ -39,7 +56,7 @@ class UsersController extends Controller
     }
 
     /**
-     * 注册逻辑
+     * 用户注册逻辑
      */
     public function store(UserRequest $request)
     {
@@ -58,14 +75,25 @@ class UsersController extends Controller
         return redirect()->back()->with('warning', '激活邮箱已经发送到你的邮箱，请注意查收');
     }
 
+    /**
+     * @param User $user
+     * 资料编辑视图
+     */
     public function edit(User $user)
     {
         $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
+    /**
+     * @param Request $request
+     * @param User $user
+     * @param ImageUpload $upload 自定义图片上传类
+     * 用户资料编辑逻辑
+     */
     public function update(Request $request, User $user, ImageUpload $upload)
     {
+        $this->authorize('update', $user);
         $this->validate($request, [
            'name' => 'required|unique:users,email,' . $user->id
         ], [
@@ -81,17 +109,17 @@ class UsersController extends Controller
         return redirect()->route('users.show', $user->id)->with('success', '修改资料成功');
     }
 
-
-    public function destroy()
-    {
-
-    }
-
+    /**
+     *密码修改视图
+     */
     public function createResetPassword()
     {
         return view('users.password_reset');
     }
 
+    /**
+     * 密码修改逻辑
+     */
     public function storeResetPassword(Request $request)
     {
         $user = User::find(Auth::id());
@@ -113,10 +141,14 @@ class UsersController extends Controller
         }
         $user->password = bcrypt($request->input('password'));
         $user->save();
+        Auth::logout();
         return redirect()->route('sessions.create')->with('success', '密码修改成功,请重新登录');
     }
 
-    //注册激活
+    /**
+     * @param $token 邮件令牌
+     * 用户注册邮件激活
+     */
     public function confirmCreate($token)
     {
         $user = User::where('activation_token', $token)->first();

@@ -7,7 +7,7 @@
                 <h3 class="panel-title">密码重置</h3>
             </div>
             <div class="panel-body">
-                @include('common.error')
+                @include('common._error')
                 <form action="{{route('password.save')}}" method="post" class="form-horizontal" role="form">
                     {{csrf_field()}}
                     <div class="form-group">
@@ -40,9 +40,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-10 col-sm-offset-4">
-                            <button type="button" class="btn btn-primary" onclick="this.disabled=true; this.innerHTML='修改中...'; this.form.submit();">
-                                确认
-                            </button>
+                            @include('common._submit_btn', ['content' => '确认'])
                         </div>
                     </div>
                 </form>

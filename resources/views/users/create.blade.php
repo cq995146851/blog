@@ -7,7 +7,7 @@
                 <h3 class="panel-title">新用户注册</h3>
             </div>
             <div class="panel-body">
-                @include('common.error')
+                @include('common._error')
                 <form action="{{route('users.store')}}" method="post" class="form-horizontal" role="form">
                     {{csrf_field()}}
                     <div class="form-group">
@@ -47,9 +47,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-10 col-sm-offset-4">
-                            <button type="button" class="btn btn-primary" onclick="this.disabled=true; this.innerHTML='注册中...'; this.form.submit();">
-                                注册 <i class="fa fa-angle-right"></i>
-                            </button>
+                            @include('common._submit_btn', ['content' => '注册'])
                         </div>
                     </div>
                 </form>

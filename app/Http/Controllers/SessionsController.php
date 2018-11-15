@@ -31,6 +31,7 @@ class SessionsController extends Controller
         ], $request->input('remember'))) {
             return redirect()->back()->withErrors('邮箱和密码不匹配');
         } elseif (!Auth::user()->activated) {
+            Auth::logout();
             return redirect()->back()->withErrors('您的账号未激活,请检查邮箱中的邮件进行激活');
         }
         return redirect()->route('users.show', Auth::id())->with('success', '登录成功');

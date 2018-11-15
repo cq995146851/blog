@@ -42,7 +42,52 @@ ul {
     width: 25px;
     height: 25px;
     border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
 }
+
+.big-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.bigger-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.user-info {
+    margin: 10px auto;
+}
+
+.user-info a {
+    display: inline-block;
+    width: 30%;
+    color: #333;
+    font-size: 16px;
+}
+
+.follow-btn {
+    margin-bottom: 10px;
+}
+
+.articles-nav {
+    margin-bottom: 10px;
+}
+
+.no-content {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #2e6da4;
+}
+
 
 
 

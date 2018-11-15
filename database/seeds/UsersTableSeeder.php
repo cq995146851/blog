@@ -3,7 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
-class UsersTableSeed extends Seeder
+class UsersTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,7 +12,7 @@ class UsersTableSeed extends Seeder
      */
     public function run()
     {
-        $users = factory(User::class)->times(50)->make();
+        $users = factory(User::class, 50)->times(50)->make();
         User::insert($users->makeVisible(['password',
             'remember_token'])->toArray());
         $user = User::find(1);

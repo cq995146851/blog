@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class PasswordController extends Controller
 {
     /**
-     * 重置密码表单
+     * 发送重置邮件表单
      */
     public function create()
     {
@@ -19,7 +19,7 @@ class PasswordController extends Controller
     }
 
     /**
-     * 重置密码逻辑
+     * 发送重置邮件逻辑
      */
     public function store(Request $request)
     {
@@ -36,7 +36,7 @@ class PasswordController extends Controller
         session()->put('reset_password_token', $token);
         $email = $request->input('email');
         $emailData = [
-            'view' => 'email.reset_password',
+            'view' => 'email.reset_pwd',
             'data' => compact('token', 'email'),
             'to' => $email,
             'subject' => '星期八博客密码找回邮件'
@@ -45,6 +45,10 @@ class PasswordController extends Controller
         return redirect()->back()->with('warning', '密码找回确认链接已经发送到你的邮箱，请注意查收');
     }
 
+    /**
+     * @param $token 重置密码令牌
+     * @param $email 重置密码邮箱
+     */
     public function confirmResetPassword($token, $email)
     {
         $sToken = session()->get('reset_password_token');
@@ -54,6 +58,9 @@ class PasswordController extends Controller
         return view('password.reset', compact('email'));
     }
 
+    /**
+     * 密码重置逻辑
+     */
     public function save(PasswordReset $request)
     {
         $user = User::where('email', $request->input('email'))->first();

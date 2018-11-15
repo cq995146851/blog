@@ -40,4 +40,13 @@ class User extends Authenticatable
             $user->activation_token = str_random(32);
         });
     }
+
+    /**
+     * 获取所有的文章
+     */
+    public function articles()
+    {
+        return $this->hasMany(Article::class, 'user_id', 'id');
+    }
+
 }

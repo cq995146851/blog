@@ -9,10 +9,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+            <a class="navbar-brand" href="javascript:void(0)" onclick="javascript:history.go(-1)"><i class="fa fa-chevron-left"></i></a>
             <a class="navbar-brand" href="#">
                 <img alt="Brand" src="{{asset('/images/blog.jpg')}}" with="25" height="25">
             </a>
-            <a class="navbar-brand" href="{{route('home')}}">星期八博客</a>
+            <a class="navbar-brand" href="{{route('articles.index')}}">星期八博客</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -20,9 +21,10 @@
             <ul class="nav navbar-nav navbar-right">
 
                 @if(Auth::check())
-                    <li><a href="{{route('users.index')}}">所有用户</a></li>
+                    <li><a href="{{route('articles.create')}}"><i class="fa fa-plus"></i>    新建帖子</a></li>
+                    <li><a href="{{route('users.index')}}"><i class="fa fa-users"></i>    所有用户</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             @if(Auth::user()->avatar)
                                 <img src="{{Auth::user()->avatar}}" class="avatar">
                             @endif
@@ -30,6 +32,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
+                            <li><a href="{{route('users.show', Auth::id())}}">个人中心</a></li>
                             <li><a href="{{route('users.edit', Auth::id())}}">编辑资料</a></li>
                             <li><a href="{{route('users.reset_password')}}">修改密码</a></li>
                             <li role="separator" class="divider"></li>
@@ -45,8 +48,8 @@
                         </ul>
                     </li>
                 @else
-                    <li><a href="{{route('users.create')}}">注册</a></li>
-                    <li><a href="{{route('sessions.create')}}">登录</a></li>
+                    <li><a href="{{route('users.create')}}"><i class="fa fa-edit"></i>    注册</a></li>
+                    <li><a href="{{route('sessions.create')}}"><i class="fa fa-user"></i>    登录</a></li>
                 @endif
             </ul>
         </div><!-- /.navbar-collapse -->
