@@ -20,4 +20,5 @@
     </body>
 </html>
 <script src="{{asset('/js/app.js')}}"></script>
+<script src="{{asset('/js/lib/layer/layer.js')}}"></script>
 @yield('my-js')

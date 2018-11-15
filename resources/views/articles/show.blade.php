@@ -23,8 +23,14 @@
 @endsection
 @section('my-js')
     <script>
-        function delete_article() {
-          $("#myForm").submit();
-        }
+      function delete_article() {
+        layer.confirm('确定要删除这条帖子?',
+            {
+              btn: ['删了', '再想想'],
+              title: '警告'
+            }, function () {
+              $("#myForm").submit();
+            })
+      }
     </script>
 @endsection
