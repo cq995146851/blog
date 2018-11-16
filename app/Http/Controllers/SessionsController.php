@@ -22,6 +22,7 @@ class SessionsController extends Controller
 
     /**
      * 登录逻辑
+     * TODO:登录后返回到登录之前页面
      */
     public function store(SessionRequest $request)
     {

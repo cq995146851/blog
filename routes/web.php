@@ -50,5 +50,12 @@ Route::resource('/articles', 'ArticlesController');
 Route::post('/articles/upload_img', 'ArticlesController@uploadImg')->name('articles.upload_img');
 //点赞
 Route::post('/articles/zan', 'ArticlesController@zan')->name('articles.zan');
+//根据专题查询
+Route::get('/articles/by_topic/{topic_id}', 'ArticlesController@byTopic')->name('articles.by_topic');
+
+/**********************************文章评论*****************************************************/
+Route::resource('/comments', 'CommentsController')->only([
+   'store', 'destroy'
+]);
 
 

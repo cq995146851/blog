@@ -37,9 +37,7 @@
                     <input type="text" name="title" value="{{old('title', $article->title)}}" class="form-control" placeholder="请输入标题">
                 </div>
                 <div class="form-group">
-                    <textarea id="editor" name="content" placeholder="内容至少10个字符">
-                        {{old('title', $article->content)}}
-                    </textarea>
+                    <textarea id="editor" name="content" placeholder="内容至少10个字符">{{old('title', $article->content)}}</textarea>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-12">

@@ -27,21 +27,36 @@ class ArticlesController extends Controller
     public function index(Request $request, Article $article)
     {
         $articles = $article->order($request->input('order'))->paginate(20);
-//        $articles = Article::with('user')
-//            ->withCount('zans')
-//            ->orderBy('updated_at', 'desc')
-//            ->orderBy('created_at', 'desc')
-//            ->paginate(20);
-        return view('articles.index', compact('articles'));
+        $topics = Topic::all();
+        $curr_topic = Topic::find(1);
+        return view('articles.index', compact('articles', 'topics', 'curr_topic'));
+    }
+
+    /**
+     * 根据专题获取文章
+     * TODO:待优化
+     */
+    public function byTopic(Request $request, Article $article, $topic_id)
+    {
+        if ($request->input('order')) {
+            $articles = $article->byTopic($topic_id)->order($request->input('order'))->paginate(20);
+        } else {
+            $articles = $article->byTopic($topic_id)->paginate(20);
+        }
+        $topics = Topic::all();
+        $curr_topic = Topic::find($topic_id);
+        return view('articles.index', compact('articles', 'topics', 'curr_topic'));
     }
 
     /**
      * 文章详情
+     * TODO 评论排序
      */
     public function show(Article $article)
     {
-        $articel = Article::with('user')
-            ->orderBy('created_at', 'desc')
+        $articel = Article::with(['user', 'topic', 'comments' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])
             ->find($article->id);
         return view('articles.show', compact('article'));
     }
@@ -94,8 +109,9 @@ class ArticlesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * 删除逻辑
+     * TODO 删除文章时删除对应的所有评论
      */
     public function destroy(Article $article)
     {
@@ -115,9 +131,9 @@ class ArticlesController extends Controller
         ];
         // 判断是否有上传文件，并赋值给 $file
         if ($file = $request->file('upload_file')) {
-        // 保存图片到本地
+            // 保存图片到本地
             $result = $upload->save($request->file('upload_file'), 'articles', Auth::id(), 100);
-        // 图片保存成功的话
+            // 图片保存成功的话
             if ($result) {
                 $data['file_path'] = $result['path'];
                 $data['msg'] = "上传成功!";
@@ -140,17 +156,18 @@ class ArticlesController extends Controller
             ];
         }
         //判断是否点过赞
-        if(Article::find($request->input('article_id'))->isZan(Auth::id())) {
+        if (Article::find($request->input('article_id'))->isZan(Auth::id())) {
             return [
-              'errcode' => 2,
-              'errmsg' => '亲，您已经点过赞了'
+                'errcode' => 2,
+                'errmsg' => '亲，您已经点过赞了'
             ];
         }
         //点赞逻辑
         Article::find($request->input('article_id'))->dozan(Auth::id());
         return [
-          'errcode' => 0,
-          'msg' => '点赞成功'
+            'errcode' => 0,
+            'msg' => '点赞成功'
         ];
     }
+
 }
