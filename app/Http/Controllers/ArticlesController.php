@@ -24,11 +24,14 @@ class ArticlesController extends Controller
     /**
      * 文章列表
      */
-    public function index()
+    public function index(Request $request, Article $article)
     {
-        $articles = Article::with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $articles = $article->order($request->input('order'))->paginate(20);
+//        $articles = Article::with('user')
+//            ->withCount('zans')
+//            ->orderBy('updated_at', 'desc')
+//            ->orderBy('created_at', 'desc')
+//            ->paginate(20);
         return view('articles.index', compact('articles'));
     }
 

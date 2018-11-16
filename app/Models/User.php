@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use function foo\func;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -36,7 +35,7 @@ class User extends Authenticatable
         parent::boot();
 
         //模型初始化时触发
-        static::creating(function($user) {
+        static::creating(function ($user) {
             $user->activation_token = str_random(32);
         });
     }
@@ -54,7 +53,7 @@ class User extends Authenticatable
      */
     public function followers()
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id' )
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')
             ->withPivot('user_id', 'follower_id')
             ->withTimestamps();
     }
@@ -101,5 +100,21 @@ class User extends Authenticatable
     public function unfollow($user_ids)
     {
         return $this->followings()->detach($user_ids);
+    }
+
+    /**
+     * 获取粉丝或关注者列表
+     */
+    public function getFollowData($type)
+    {
+        switch ($type) {
+            case 'followings':
+                $users = $this->followings();
+                break;
+            default:
+                $users = $this->followers();
+                break;
+        }
+        return $users->withCount('followers')->paginate(10);
     }
 }

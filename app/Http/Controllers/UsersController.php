@@ -31,15 +31,7 @@ class UsersController extends Controller
         $user_id = $request->input('user_id');
         $type = $request->input('type');
         if ($user_id && $type) {
-            if ($type == 'followings') {
-                $users = User::find($user_id)->followings()
-                    ->withCount('followers')
-                    ->paginate(10);
-            } elseif ($type == 'followers') {
-                $users = User::find($user_id)->followers()
-                    ->withCount('followers')
-                    ->paginate(10);
-            }
+            $users = User::find($user_id)->getFollowData($type);
         } else {
             $users = User::withCount('followers')
                 ->orderBy('followers_count', 'desc')

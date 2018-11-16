@@ -6,10 +6,18 @@
         <h2>{{$user->name}}</h2>
     </div>
     <div class="col-sm-12 text-center user-info">
-        <a href="{{route('users.index')}}?user_id={{$user->id}}&type=followings">
+        @if($user->followings_count)
+            <a href="{{route('users.index')}}?user_id={{$user->id}}&type=followings">
+        @else
+            <a href="javascript:void(0)">
+        @endif
             <strong>{{$user->followings_count}}</strong>关注
         </a>
-        <a href="{{route('users.index')}}?user_id={{$user->id}}&type=followers">
+        @if($user->followers_count)
+            <a href="{{route('users.index')}}?user_id={{$user->id}}&type=followers">
+        @else
+            <a href="javascript:void(0)">
+        @endif
             <strong>{{$user->followers_count}}</strong>粉丝
         </a>
         <a href="javascript:void(0)">
@@ -18,7 +26,15 @@
     </div>
     <div class="col-sm-12 text-center follow-btn">
         @if(Auth::id() && Auth::id() != $user->id)
-            @include('common._follow_btn', compact('user'))
+            @if(Auth::user()->isFollowing($user->id))
+                <button class="btn btn-danger" status="0">
+                    取消关注
+                </button>
+            @else
+                <button class="btn btn-primary" status="1">
+                    关注
+                </button>
+            @endif
         @endif
     </div>
     <div class="col-sm-12">
@@ -34,35 +50,6 @@
 @endsection
 @section('my-js')
     <script>
-      //点赞
-      function zan(article_id, self) {
-        let that = $(self)
-        $.ajax({
-          type: 'post',
-          dataType: 'json',
-          url: '{{route("articles.zan")}}',
-          data: {article_id: article_id, _token: "{{csrf_token()}}"},
-          beforeSend() {
-            layer.load()
-          },
-          success(res) {
-            layer.closeAll()
-            if (res.errcode) {
-              layer.msg(res.errmsg, {time: 2000, icon: 2})
-              return false
-            }
-            let count = parseInt(that.find('i').html());
-            count++
-            that.find('i').html(count)
-            layer.msg(res.msg, {time: 1500, icon:1})
-          },
-          error(res) {
-            layer.closeAll()
-            layer.msg('请求失败', {time: 2000, icon: 2})
-          }
-        })
-      }
-
       $(function () {
         //关注
         $('.follow-btn button').click(function () {

@@ -25,3 +25,33 @@
 <div class="text-center">
     {{ $articles->links() }}
 </div>
+<script>
+  //点赞
+  function zan(article_id, self) {
+    let that = $(self)
+    $.ajax({
+      type: 'post',
+      dataType: 'json',
+      url: '{{route("articles.zan")}}',
+      data: {article_id: article_id, _token: "{{csrf_token()}}"},
+      beforeSend() {
+        layer.load()
+      },
+      success(res) {
+        layer.closeAll()
+        if (res.errcode) {
+          layer.msg(res.errmsg, {time: 2000, icon: 2})
+          return false
+        }
+        let count = parseInt(that.find('i').html());
+        count++
+        that.find('i').html(count)
+        layer.msg(res.msg, {time: 1500, icon:1})
+      },
+      error(res) {
+        layer.closeAll()
+        layer.msg('请求失败', {time: 2000, icon: 2})
+      }
+    })
+  }
+</script>

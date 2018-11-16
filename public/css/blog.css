@@ -44,6 +44,8 @@ ul {
     border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
+    margin-right:8px;
+    margin-top:-3px;
 }
 
 .big-avatar {

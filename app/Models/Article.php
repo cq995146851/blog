@@ -57,4 +57,20 @@ class Article extends Model
     {
         return $this->zans()->detach($user_ids);
     }
+
+    /**
+     * 文章列表排序
+     */
+    public function scopeOrder($query, $order)
+    {
+        switch ($order) {
+            case 'new':
+                $query = $query->orderBy('created_at', 'desc');
+                break;
+            case 'hot':
+                $query = $query->orderBy('id', 'asc');
+                break;
+        }
+        return $query->with('user')->withCount('zans');
+    }
 }
