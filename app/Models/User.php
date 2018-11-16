@@ -49,4 +49,57 @@ class User extends Authenticatable
         return $this->hasMany(Article::class, 'user_id', 'id');
     }
 
+    /**
+     * 获取粉丝
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id' )
+            ->withPivot('user_id', 'follower_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * 获取关注的人
+     */
+    public function followings()
+    {
+        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id')
+            ->withPivot('user_id', 'follower_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * 判断是否关注某人
+     */
+    public function isFollowing($user_id)
+    {
+        return $this->followings()->find($user_id);
+    }
+
+    /**
+     * 判断是否被某人关注
+     */
+
+    public function isFollower($user_id)
+    {
+        return $this->followers()->find($user_id);
+    }
+
+    /**
+     * 关注某人
+     */
+    public function follow($user_ids)
+    {
+        return $this->followings()->sync($user_ids, false);
+    }
+
+    /**
+     * 取消关注
+     */
+
+    public function unfollow($user_ids)
+    {
+        return $this->followings()->detach($user_ids);
+    }
 }

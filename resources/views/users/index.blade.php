@@ -10,13 +10,9 @@
                 <div class="list-group">
                     @foreach($users as $user)
                         <a href="{{route('users.show', $user->id)}}" class="list-group-item">
-                            @if($user->avatar)
-                                <img class="avatar" src="{{$user->avatar}}" alt="{{$user->name}}">
-                            @else
-                                <img class="avatar" src="{{asset('/images/noimg.jpg')}}" alt="{{$user->name}}">
-                            @endif
+                           @include('common._avatar', ['class' => 'avatar', 'user' => $user])
                             {{$user->name}}
-                            <span class="badge">12粉丝</span>
+                            <span class="badge">{{$user->followers_count}}个粉丝</span>
                         </a>
                     @endforeach
                 </div>

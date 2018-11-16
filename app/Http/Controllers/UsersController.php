@@ -19,16 +19,32 @@ class UsersController extends Controller
     public function __construct()
     {
         $this->middleware('check.login', [
-           'except' => ['create', 'store', 'confirmCreate', 'index', 'show']
+            'except' => ['create', 'store', 'confirmCreate', 'index', 'show']
         ]);
     }
 
     /**
      * 用户列表
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
+        $user_id = $request->input('user_id');
+        $type = $request->input('type');
+        if ($user_id && $type) {
+            if ($type == 'followings') {
+                $users = User::find($user_id)->followings()
+                    ->withCount('followers')
+                    ->paginate(10);
+            } elseif ($type == 'followers') {
+                $users = User::find($user_id)->followers()
+                    ->withCount('followers')
+                    ->paginate(10);
+            }
+        } else {
+            $users = User::withCount('followers')
+                ->orderBy('followers_count', 'desc')
+                ->paginate(10);
+        }
         return view('users.index', compact('users'));
     }
 
@@ -38,12 +54,9 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        $user = User::withCount('articles')
+        $user = User::withCount(['articles', 'followings', 'followers'])
             ->find($user->id);
-        $articles = Article::where('user_id', $user->id)
-            ->with('user')
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+        $articles = Article::getArticlesByUserId($user->id);
         return view('users.show', compact('user', 'articles'));
     }
 
@@ -95,13 +108,15 @@ class UsersController extends Controller
     {
         $this->authorize('update', $user);
         $this->validate($request, [
-           'name' => 'required|unique:users,email,' . $user->id
+            'name' => 'required|unique:users,email,' . $user->id,
+            'avatar' => 'image'
         ], [
             'name.required' => '用户名不能为空',
-            'name.unique' => '用户名已经存在'
+            'name.unique' => '用户名已经存在',
+            'avatar.image' => '上传的文件必须是图片'
         ]);
         $user->name = $request->input('name');
-        if($request->file('avatar')){
+        if ($request->file('avatar')) {
             $image = $upload->save($request->file('avatar'), 'avatar', $user->id, '320');
             $user->avatar = $image['path'];
         }
@@ -127,7 +142,7 @@ class UsersController extends Controller
             'old_password' => 'required|between:6,20',
             'password' => 'required|between:6,20|confirmed',
             'captcha' => 'required|captcha'
-        ],[
+        ], [
             'old_password.required' => '旧密码不能为空',
             'old_password.between' => '旧密码只能在6到20位',
             'password.required' => '新密码不能为空',
@@ -160,5 +175,40 @@ class UsersController extends Controller
         $user->save();
         Auth::login($user);
         return redirect()->route('users.show', $user->id)->with('success', '邮箱激活成功');
+    }
+
+    /**
+     * 关注与取消关注逻辑
+     */
+    public function follow(Request $request)
+    {
+        if (!Auth::check()) {
+            return [
+                'errcode' => 1,
+                'errmsg' => '您尚未登录，请登录后再关注',
+            ];
+        }
+        $this->validate($request, [
+            'status' => 'required|boolean',
+            'user_id' => 'required|integer'
+        ], [
+            'status.required' => '缺少状态值参数',
+            'status.boolean' => '状态值参数必须是布尔值',
+            'user_id.required' => '缺少用户编号参数',
+            'user_id.integer' => '用户编号参数必须是整数'
+        ]);
+
+        if ($request->input('status')) {
+            Auth::user()->follow($request->input('user_id'));
+            $msg = '关注成功';
+        } else {
+            Auth::user()->unfollow($request->input('user_id'));
+            $msg = '取消关注成功';
+        }
+
+        return [
+            'errcode' => 0,
+            'msg' => $msg
+        ];
     }
 }

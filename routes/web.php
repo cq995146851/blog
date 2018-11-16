@@ -25,6 +25,9 @@ Route::get('/user/confirm_create/{token}', 'UsersController@confirmCreate')->nam
 Route::get('/users/reset_password/create', 'UsersController@createResetPassword')->name('users.reset_password');
 Route::post('/users/reset_password/store', 'UsersController@storeResetPassword')->name('users.save_reset_password');
 
+//关注与取消关注
+Route::post('/users/follow', 'UsersController@follow')->name('users.follow');
+
 
 /******************************会话控制*****************************************/
 Route::resource('/sessions', 'SessionsController')->only([
@@ -45,5 +48,7 @@ Route::post('/password/save', 'PasswordController@save')->name('password.save');
 Route::resource('/articles', 'ArticlesController');
 //上传图片
 Route::post('/articles/upload_img', 'ArticlesController@uploadImg')->name('articles.upload_img');
+//点赞
+Route::post('/articles/zan', 'ArticlesController@zan')->name('articles.zan');
 
 

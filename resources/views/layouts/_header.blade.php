@@ -25,9 +25,7 @@
                     <li><a href="{{route('users.index')}}"><i class="fa fa-users"></i>    所有用户</a></li>
                     <li class="dropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            @if(Auth::user()->avatar)
-                                <img src="{{Auth::user()->avatar}}" class="avatar">
-                            @endif
+                            @include('common._avatar', ['class' => 'avatar', 'user' => Auth::user()])
                             {{Auth::user()->name}}
                             <span class="caret"></span>
                         </a>

@@ -17,7 +17,7 @@ class ArticlesController extends Controller
     public function __construct()
     {
         $this->middleware('check.login', [
-            'except' => ['index', 'show']
+            'except' => ['index', 'show', 'zan']
         ]);
     }
 
@@ -122,5 +122,32 @@ class ArticlesController extends Controller
             }
         }
         return $data;
+    }
+
+    /**
+     * 点赞逻辑
+     */
+    public function zan(Request $request)
+    {
+        //判断是否登录
+        if (!Auth::check()) {
+            return [
+                'errcode' => 1,
+                'errmsg' => '您尚未登录，请登录后再点赞',
+            ];
+        }
+        //判断是否点过赞
+        if(Article::find($request->input('article_id'))->isZan(Auth::id())) {
+            return [
+              'errcode' => 2,
+              'errmsg' => '亲，您已经点过赞了'
+            ];
+        }
+        //点赞逻辑
+        Article::find($request->input('article_id'))->dozan(Auth::id());
+        return [
+          'errcode' => 0,
+          'msg' => '点赞成功'
+        ];
     }
 }
