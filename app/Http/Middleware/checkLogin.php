@@ -17,7 +17,6 @@ class checkLogin
     public function handle($request, Closure $next)
     {
         if(!Auth::check()) {
-            dd($request->getRequestUri());
             session()->put('return_url', $request->getRequestUri());
             return redirect()->route('sessions.create')->with('danger', '您尚未登录，禁止操作');
         }
