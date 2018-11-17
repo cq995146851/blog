@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Handler\ImageUpload;
 use App\Http\Requests\ArticleRequest;
 use App\Models\Article;
+use App\Models\Comment;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +27,7 @@ class ArticlesController extends Controller
      */
     public function index(Request $request, Article $article)
     {
-        $articles = $article->order($request->input('order'))->paginate(20);
+        $articles = $article->order($request->input('order', 'new'))->paginate(10);
         $topics = Topic::all();
         $curr_topic = Topic::find(1);
         return view('articles.index', compact('articles', 'topics', 'curr_topic'));
@@ -39,9 +40,9 @@ class ArticlesController extends Controller
     public function byTopic(Request $request, Article $article, $topic_id)
     {
         if ($request->input('order')) {
-            $articles = $article->byTopic($topic_id)->order($request->input('order'))->paginate(20);
+            $articles = $article->byTopic($topic_id)->order($request->input('order', 'new'))->paginate(10);
         } else {
-            $articles = $article->byTopic($topic_id)->paginate(20);
+            $articles = $article->byTopic($topic_id)->paginate(10);
         }
         $topics = Topic::all();
         $curr_topic = Topic::find($topic_id);
@@ -50,15 +51,20 @@ class ArticlesController extends Controller
 
     /**
      * 文章详情
-     * TODO 评论排序
+     * TODO 热加载评论排序失败
      */
     public function show(Article $article)
     {
-        $articel = Article::with(['user', 'topic', 'comments' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])
+        //$articel = Article::with(['user', 'topic', 'comments' => function($query) {
+        //  $query->orderBy('created_at', 'desc');
+        //}])
+        //            ->find($article->id);
+        $articel = Article::with(['user', 'topic'])
             ->find($article->id);
-        return view('articles.show', compact('article'));
+        $comments = Comment::where('article_id', $article->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(5);
+        return view('articles.show', compact('article', 'comments'));
     }
 
     /**
@@ -111,11 +117,12 @@ class ArticlesController extends Controller
      *
      * @param  int $id
      * 删除逻辑
-     * TODO 删除文章时删除对应的所有评论
      */
     public function destroy(Article $article)
     {
         $article->delete();
+        //删除帖子时删除所有评论
+        $article->delComments();
         return redirect()->route('users.show', Auth::id())->with('success', '帖子删除成功');
     }
 

@@ -22,7 +22,6 @@ class SessionsController extends Controller
 
     /**
      * 登录逻辑
-     * TODO:登录后返回到登录之前页面
      */
     public function store(SessionRequest $request)
     {
@@ -35,7 +34,8 @@ class SessionsController extends Controller
             Auth::logout();
             return redirect()->back()->withErrors('您的账号未激活,请检查邮箱中的邮件进行激活');
         }
-        return redirect()->intended(route('users.show', Auth::id()))->with('success', '欢迎回来');
+        $url = session()->get('return_url') ? session()->get('return_url') : '/users/' . Auth::id();
+        return redirect($url)->with('success', '欢迎回来');
     }
 
     /**

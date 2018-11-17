@@ -39,7 +39,7 @@ class Article extends Model
         return self::where('user_id', $user_id)
             ->with('user')
             ->withCount(['zans', 'comments'])
-            ->orderBy('created_at', 'desc')
+            ->orderByRaw('case when updated_at > created_at then updated_at else created_at end desc')
             ->paginate(5);
     }
 
@@ -80,15 +80,16 @@ class Article extends Model
      */
     public function scopeOrder($query, $order)
     {
+        $query = $query->with('user')->withCount(['zans', 'comments']);
         switch ($order) {
             case 'new':
-                $query = $query->orderBy('created_at', 'desc');
+                $query = $query->orderByRaw("case when updated_at > created_at then updated_at else created_at end desc");
                 break;
             case 'hot':
-                $query = $query->orderBy('id', 'asc');
+                $query = $query->orderBy('comments_count', 'desc');
                 break;
         }
-        return $query->with('user')->withCount(['zans', 'comments']);
+        return $query;
     }
 
     /**
@@ -119,5 +120,13 @@ class Article extends Model
     public function hasComment($user_id)
     {
         return $this->comments()->where('user_id', $user_id)->first();
+    }
+
+    /**
+     * 删除所有评论
+     */
+    public function delComments()
+    {
+        return $this->comments()->delete();
     }
 }

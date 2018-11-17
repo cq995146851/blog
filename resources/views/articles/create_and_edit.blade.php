@@ -27,7 +27,7 @@
                     <select class="form-control" name="topic_id">
                         <option value="" selected disabled hidden>请选择专题</option>
                         @foreach($topics as $topic)
-                            <option value="{{$topic->id}}" @if($article->topic_id == $topic->id) selected @endif>
+                            <option value="{{$topic->id}}" @if(old('topic_id', $article->topic_id) == $topic->id) selected @endif>
                                 {{$topic->name}}
                             </option>
                         @endforeach
@@ -37,7 +37,7 @@
                     <input type="text" name="title" value="{{old('title', $article->title)}}" class="form-control" placeholder="请输入标题">
                 </div>
                 <div class="form-group">
-                    <textarea id="editor" name="content" placeholder="内容至少10个字符">{{old('title', $article->content)}}</textarea>
+                    <textarea id="editor" name="content" placeholder="内容至少10个字符">{{old('content', $article->content)}}</textarea>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-12">

@@ -42,9 +42,11 @@
             @include('common._articles_summary', compact('articles'))
         @else
             @include('common._no_content', ['content' => '暂没有发布帖子哦'])
+            @can('update', Auth::user())
             <div class="text-center">
                 <a href="{{route('articles.create')}}" class="btn btn-primary">去发布</a>
             </div>
+            @endcan
         @endif
     </div>
 @endsection
