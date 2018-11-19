@@ -18,7 +18,7 @@ class ArticlesController extends Controller
     public function __construct()
     {
         $this->middleware('check.login', [
-            'except' => ['index', 'show', 'zan']
+            'except' => ['index', 'show', 'byTopic',  'zan']
         ]);
     }
 
@@ -29,7 +29,7 @@ class ArticlesController extends Controller
     {
         $articles = $article->order($request->input('order', 'new'))->paginate(10);
         $topics = Topic::all();
-        $curr_topic = Topic::find(1);
+        $curr_topic = '';
         return view('articles.index', compact('articles', 'topics', 'curr_topic'));
     }
 
@@ -45,7 +45,7 @@ class ArticlesController extends Controller
             $articles = $article->byTopic($topic_id)->paginate(10);
         }
         $topics = Topic::all();
-        $curr_topic = Topic::find($topic_id);
+        $curr_topic = $topic_id ? Topic::find($topic_id) : '';
         return view('articles.index', compact('articles', 'topics', 'curr_topic'));
     }
 
@@ -61,9 +61,7 @@ class ArticlesController extends Controller
         //            ->find($article->id);
         $articel = Article::with(['user', 'topic'])
             ->find($article->id);
-        $comments = Comment::where('article_id', $article->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(5);
+        $comments = Comment::getByArticleId($article->id);
         return view('articles.show', compact('article', 'comments'));
     }
 
@@ -163,14 +161,14 @@ class ArticlesController extends Controller
             ];
         }
         //判断是否点过赞
-        if (Article::find($request->input('article_id'))->isZan(Auth::id())) {
+        if (Article::find($request->input('id'))->isZan(Auth::id())) {
             return [
                 'errcode' => 2,
                 'errmsg' => '亲，您已经点过赞了'
             ];
         }
         //点赞逻辑
-        Article::find($request->input('article_id'))->dozan(Auth::id());
+        Article::find($request->input('id'))->dozan(Auth::id());
         return [
             'errcode' => 0,
             'msg' => '点赞成功'

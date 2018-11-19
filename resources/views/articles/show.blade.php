@@ -4,8 +4,9 @@
     <div class="col-sm-12 margin-ten">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <a href="{{route('articles.by_topic', $article->topic->id)}}"><span class="panel-title">{{$article->topic->name}}
-                        专题</a></span>
+                <a href="{{route('articles.by_topic', $article->topic->id)}}">
+                    <span class="panel-title">{{$article->topic->name}}专题</span>
+                </a>
                 @can('delete', $article->user)
                     <a href="javascript:void(0)" onclick="delete_article()"><i class="fa fa-trash pull-right">删除</i></a>
                     <form action="{{route('articles.destroy', $article->id)}}" method="post" id="myForm" hidden>
@@ -45,6 +46,8 @@
                 </div>
             </div>
         </div>
+    @else
+        @include('common._no_login', ['content' => '您尚未登录，登录后可以参与评论'])
     @endif
     <div class="col-sm-12">
         <div class="panel panel-default">
@@ -78,7 +81,10 @@
                                             </form>
                                         @endif
                                     </h5>
-                                    <p>{{$comment->content}}</p>
+                                    <div>
+                                        {{$comment->content}}&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @include('common._zan', ['data' => $comment, 'url' => route("comments.zan")])
+                                    </div>
                                 </div>
                             </li>
                         </ul>

@@ -6,16 +6,24 @@
         <li role="presentation" class="{{active_class(if_query('order', 'hot'))}}"><a href="{{Request::url()}}?order=hot">最热帖子</a></li>
         <li role="presentation" class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                 {{$curr_topic->name}}<span class="caret"></span>
+                @if(empty($curr_topic))
+                   全部
+                @else
+                    {{$curr_topic->name}}
+                @endif
+                <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
+                <li><a href="{{route('articles.by_topic', 0)}}"><strong>全部</strong></a></li>
                 @foreach($topics as $topic)
-                    @if($topic->id != $curr_topic->id)
-                        <li><a href="{{route('articles.by_topic', $topic->id)}}">{{$topic->name}}</a></li>
-                    @endif
+                    <li><a href="{{route('articles.by_topic', $topic->id)}}">{{$topic->name}}</a></li>
                 @endforeach
             </ul>
         </li>
     </ul>
-    @include('common._articles_summary', compact('articles'))
+    @if($articles->isNotEmpty())
+        @include('common._articles_summary', compact('articles'))
+    @else
+        @include('common._no_content', ['content' => '未找到任何帖子'])
+    @endif
 @endsection

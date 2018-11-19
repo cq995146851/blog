@@ -51,11 +51,15 @@ Route::post('/articles/upload_img', 'ArticlesController@uploadImg')->name('artic
 //点赞
 Route::post('/articles/zan', 'ArticlesController@zan')->name('articles.zan');
 //根据专题查询
-Route::get('/articles/by_topic/{topic_id}', 'ArticlesController@byTopic')->name('articles.by_topic');
+Route::get('/articles/by_topic/{topic_id?}', 'ArticlesController@byTopic')->name('articles.by_topic');
 
 /**********************************文章评论*****************************************************/
 Route::resource('/comments', 'CommentsController')->only([
    'store', 'destroy'
 ]);
+
+//评论点赞
+Route::post('/comments/zan', 'CommentsController@zan')->name('comments.zan');
+
 
 

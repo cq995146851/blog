@@ -1,0 +1,1 @@
+<h2><i class="fa fa-exclamation-triangle"></i>{{$content}}</h2>

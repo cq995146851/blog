@@ -25,7 +25,9 @@
         </a>
     </div>
     <div class="col-sm-12 text-center follow-btn">
-        @if(Auth::id() && Auth::id() != $user->id)
+        @if(!Auth::id())
+            @include('common._no_login', ['content' => '您尚未登录，登录后才可以关注用户'])
+        @elseif(Auth::id() != $user->id)
             @if(Auth::user()->isFollowing($user->id))
                 <button class="btn btn-danger" status="0">
                     取消关注
@@ -42,11 +44,11 @@
             @include('common._articles_summary', compact('articles'))
         @else
             @include('common._no_content', ['content' => '暂没有发布帖子哦'])
-            @can('update', Auth::user())
+            @if($user->id == Auth::id())
             <div class="text-center">
                 <a href="{{route('articles.create')}}" class="btn btn-primary">去发布</a>
             </div>
-            @endcan
+            @endif
         @endif
     </div>
 @endsection

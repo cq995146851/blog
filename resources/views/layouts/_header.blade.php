@@ -10,10 +10,9 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="javascript:void(0)" onclick="javascript:history.go(-1)"><i class="fa fa-chevron-left"></i></a>
-            <a class="navbar-brand" href="#">
-                <img alt="Brand" src="{{asset('/images/blog.jpg')}}" with="25" height="25">
-            </a>
-            <a class="navbar-brand" href="{{route('articles.index')}}">星期八博客</a>
+            <a class="navbar-brand" href="{{route('articles.index')}}"><i class="fa fa-file-text">文章</i></a>
+            <a class="navbar-brand" href="{{route('users.index')}}"><i class="fa fa-user">用户</i></a>
+            <a class="navbar-brand" href="javascript:void(0)" onclick="location.reload()"><i class="fa fa-refresh"></i></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -21,8 +20,7 @@
             <ul class="nav navbar-nav navbar-right">
 
                 @if(Auth::check())
-                    <li><a href="{{route('articles.create')}}"><i class="fa fa-plus"></i>    新建帖子</a></li>
-                    <li><a href="{{route('users.index')}}"><i class="fa fa-users"></i>    所有用户</a></li>
+                    <li><a href="{{route('articles.create')}}"><i class="fa fa-plus">新建帖子</i></a></li>
                     <li class="dropdown">
                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                             @include('common._avatar', ['class' => 'avatar', 'user' => Auth::user()])

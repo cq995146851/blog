@@ -37,6 +37,15 @@ ul {
     list-style: none;
 }
 
+.margin-none {
+    margin: 0;
+}
+
+a, a:hover {
+    text-decoration: none;
+}
+
+
 /*头像*/
 .avatar {
     width: 25px;
@@ -94,6 +103,20 @@ ul {
     color: #66615f;
     font-weight: 600;
 }
+
+.fa-thumbs-up, .fa-thumbs-down, .fa-comment, .fa-clock-o {
+    display: inline-block;
+    color: #2a88bd;
+    font-size: 14px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.thumbs-active {
+    color: #333;
+    font-weight: bold;
+}
+
 
 
 

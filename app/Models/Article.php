@@ -56,7 +56,7 @@ class Article extends Model
      */
     public function isZan($user_id)
     {
-        return $this->zans->find($user_id);
+        return $this->zans()->find($user_id);
     }
 
     /**
@@ -97,9 +97,8 @@ class Article extends Model
      */
     public function scopeByTopic($query, $topic_id)
     {
-        return $query->where('topic_id', $topic_id)
-            ->with('user')
-            ->withCount(['zans', 'comments']);
+        $query = $topic_id ? $query->where('topic_id', $topic_id) : $query;
+        return $query->with('user')->withCount(['zans', 'comments']);
     }
 
     /**

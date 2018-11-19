@@ -11,7 +11,9 @@ class CommentsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('check.login');
+        $this->middleware('check.login', [
+            'except' => 'zan'
+        ]);
     }
 
     /**
@@ -39,5 +41,33 @@ class CommentsController extends Controller
     {
         $comment->delete();
         return redirect()->back()->with('success', '删除评论成功');
+    }
+
+    /**
+     * 点赞
+     */
+    public function zan(Request $request)
+    {
+        //判断是否登录
+        if (!Auth::check()) {
+            return [
+                'errcode' => 1,
+                'errmsg' => '您尚未登录，请登录后再顶',
+            ];
+        }
+        //判断是否点过赞
+        $comment = Comment::find($request->input('id'));
+        if ($comment->isZan(Auth::id())) {
+            return [
+                'errcode' => 2,
+                'errmsg' => '亲，您已经顶过了'
+            ];
+        }
+        //点赞逻辑
+        $comment->dozan();
+        return [
+            'errcode' => 0,
+            'msg' => '顶了一下'
+        ];
     }
 }
